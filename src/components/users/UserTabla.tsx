@@ -35,11 +35,7 @@ export const UserTabla = ({
   handleToggleStatus,
   handleOpenEditDialog,
 }: Props) => {
-  const formatDate = (date: string) =>
-    new Date(date).toLocaleString('es-ES', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
+  
 
   const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
