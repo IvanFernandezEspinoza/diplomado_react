@@ -1,22 +1,22 @@
 import { Box } from '@mui/material';
-import { useState, useEffect } from 'react';
-import type { GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
-import { useAlert, useAxios } from '../../hooks';
-import { errorHelper, hanleZodError } from '../../helpers';
-import { schemaUser, type UserFormValues } from '../../models';
 import {
   UserDialog,
   UserFilter,
   UserHeader,
   UserTabla,
-  // type UserType,
   type UserActionState,
 } from '../../components';
+import { useEffect, useState } from 'react';
 import type { UserType } from '../../components/users/type';
+import type { GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
+import { useAlert, useAxios } from '../../hooks';
+import { errorHelper, hanleZodError } from '../../helpers';
+import { schemaUser, type UserFormValues } from '../../models';
 
 export const UsersPage = () => {
   const { showAlert } = useAlert();
   const axios = useAxios();
+
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
   const [search, setSearch] = useState('');
   const [users, setUsers] = useState<UserType[]>([]);
@@ -31,6 +31,7 @@ export const UsersPage = () => {
 
   useEffect(() => {
     listUsersApi();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, filterStatus, paginationModel, sortModel]);
 
   const listUsersApi = async () => {
@@ -59,47 +60,56 @@ export const UsersPage = () => {
     setUser(null);
   };
 
-  const handleOpenEditDialog = (user: UserType) => {
-    setOpenDialog(true);
-    setUser(user);
-  };
-
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setUser(null);
   };
 
-  const handleCreateEdit = async (
-    _: UserActionState | undefined,
-    formdata: FormData
-  ) => {
-    const rawData = {
-      username: formdata.get('username') as string,
-      password: formdata.get('password') as string,
-      confirmPassword: formdata.get('confirmPassword') as string,
-    };
-
-    try {
-      schemaUser.parse(rawData);
-      if (user?.id) {
-        await axios.put(`/users/${user.id}`, rawData);
-        showAlert('Usuario editado', 'success');
-      } else {
-        await axios.post('/users', rawData);
-        showAlert('Usuario creado', 'success');
-      }
-      listUsersApi();
-      handleCloseDialog();
-    } catch (error) {
-      const err = hanleZodError<UserFormValues>(error, rawData);
-      showAlert(err.message, 'error');
-      return err;
-    }
+  const handleOpenEditDialog = (user: UserType) => {
+    setOpenDialog(true);
+    setUser(user);
   };
+
+  const handleCreateEdit = async (
+  _: UserActionState | undefined,
+  formdata: FormData
+) => {
+  const rawData: any = {
+  username: formdata.get('username') as string,
+  password: formdata.get('password') as string,
+  confirmPassword: formdata.get('confirmPassword') as string,
+};
+
+  if (!user) {
+    rawData.confirmPassword = formdata.get('confirmPassword') as string;
+  }
+
+  try {
+    schemaUser.parse(rawData);
+
+    if (user?.id) {
+      await axios.put(`/users/${user.id}`, rawData);
+      showAlert('Usuario editado', 'success');
+    } else {
+      await axios.post('/users', rawData);
+      showAlert('Usuario creado', 'success');
+    }
+
+    listUsersApi();
+    handleCloseDialog();
+    return;
+  } catch (error) {
+    console.log("llego aqui");
+    const err = hanleZodError<UserFormValues>(error, rawData);
+    showAlert(err.message, 'error');
+    return err;
+  }
+};
+
 
   const handleDelete = async (id: number) => {
     try {
-      const confirmed = window.confirm('¿Eliminar usuario?');
+      const confirmed = window.confirm('¿Estás seguro de eliminar?');
       if (!confirmed) return;
 
       await axios.delete(`/users/${id}`);
@@ -110,33 +120,31 @@ export const UsersPage = () => {
     }
   };
 
-  // const handleToggleStatus = async (id: number, status: 'active' | 'inactive') => {
-  //   try {
-  //     await axios.patch(`/users/${id}`, { status: status === 'active' ? 'inactive' : 'active' });
-  //     showAlert('Estado actualizado', 'success');
-  //     listUsersApi();
-  //   } catch (error) {
-  //     showAlert(errorHelper(error), 'error');
-  //   }
-  // };
-
-  const handleToggleStatus = async (id: number, currentStatus: string) => {
-    const newStatus = currentStatus === 'inactive' ? 'active' : 'inactive';
-    //console.log(currentStatus+" and "+newStatus);
+  const handleToggleStatus = async (id: number, status: 'active' | 'inactive') => {
     try {
-      await axios.patch(`/users/${id}`, { status: newStatus });
-      showAlert(`Estado cambiado a ${newStatus}`, 'success');
+      const confirmed = window.confirm(
+        '¿Estás seguro de que quieres cambiar el estado?'
+      );
+      if (!confirmed) return;
+
+      await axios.patch(`/users/${id}`, {
+        status: status === 'active' ? 'inactive' : 'active',
+      });
+      showAlert('Usuario modificado', 'success');
       listUsersApi();
     } catch (error) {
       showAlert(errorHelper(error), 'error');
     }
   };
 
-
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box>
       <UserHeader handleOpenCreateDialog={handleOpenCreateDialog} />
-      <UserFilter setSearch={setSearch} filterStatus={filterStatus} setFilterStatus={setFilterStatus} />
+      <UserFilter
+        filterStatus={filterStatus}
+        setFilterStatus={setFilterStatus}
+        setSearch={setSearch}
+      />
       <UserTabla
         users={users}
         rowCount={total}

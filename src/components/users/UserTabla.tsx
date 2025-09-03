@@ -1,8 +1,16 @@
-
-import { DataGrid, type GridColDef } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  type GridColDef,
+  type GridRenderCellParams,
+} from '@mui/x-data-grid';
 import type { UserType } from './type';
-import { IconButton, Stack, Tooltip } from '@mui/material';
-import { Edit as EditIcon, Undo as UndoIcon, Done as DoneIcon,Delete as DeleteIcon, } from '@mui/icons-material';
+import { Chip, IconButton, Stack, Tooltip } from '@mui/material';
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Undo as UndoIcon,
+  Done as DoneIcon,
+} from '@mui/icons-material';
 
 interface Props {
   users: UserType[];
@@ -27,54 +35,81 @@ export const UserTabla = ({
   handleToggleStatus,
   handleOpenEditDialog,
 }: Props) => {
-  const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 80 },
-    { field: 'username', headerName: 'Usuario', flex: 1 },
-    { field: 'status', headerName: 'Estado', width: 150 },
-    { field: 'createdAt', headerName: 'Creado', flex: 1 },
-    { field: 'updatedAt', headerName: 'Actualizado', flex: 1 },
-    { field: 'actions',headerName: 'Acciones',
-      sortable: false,
-      renderCell: (params) => (
-        <Stack direction = {'row'} spacing={1}>
-          <Tooltip title="Editar">
-            <IconButton size="small" onClick={() => handleOpenEditDialog(params.row)}>
-              <EditIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+  const formatDate = (date: string) =>
+    new Date(date).toLocaleString('es-ES', {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    });
 
-          <Tooltip
-            title={
-              params.row.done === true ? 'Marcar activo' : 'Marcar inactivo'
+  const columns: GridColDef[] = [
+  { field: 'id', headerName: 'ID', width: 90 },
+  { field: 'username', headerName: 'Usuario', flex: 1 },
+  {
+    field: 'status',
+    headerName: 'Estado',
+    width: 150,
+    renderCell: (params: GridRenderCellParams) => (
+      <Chip
+        label={params.value === 'active' ? 'Activo' : 'Inactivo'}
+        color={params.value === 'active' ? 'success' : 'warning'}
+        size="small"
+        variant="outlined"
+      />
+    ),
+  },
+  {
+    field: 'actions',
+    headerName: 'Acciones',
+    sortable: false,
+    filterable: false,
+    width: 200,
+    renderCell: (params: GridRenderCellParams) => (
+      <Stack direction={'row'} spacing={1}>
+        <Tooltip title="Editar">
+          <IconButton
+            size="small"
+            onClick={() => handleOpenEditDialog(params.row)}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip
+          title={
+            params.row.status === 'active'
+              ? 'Marcar inactivo'
+              : 'Marcar activo'
+          }
+        >
+          <IconButton
+            size="small"
+            color={params.row.status === 'active' ? 'warning' : 'success'}
+            onClick={() =>
+              handleToggleStatus(params.row.id, params.row.status)
             }
           >
-            <IconButton
-              size="small"
-              color={params.row.done === true ? 'warning' : 'success'}
-              onClick={() => handleToggleStatus(params.row.id, params.row.done)}
-            >
-              {params.row.done === true ? (
-                <UndoIcon fontSize="small" />
-              ) : (
-                <DoneIcon fontSize="small" />
-              )}
-            </IconButton>
-          </Tooltip>
-                    
-          <Tooltip title="Eliminar">
-            <IconButton
-              size="small"
-              color="error"
-              onClick={() => handleDelete(params.row.id)}
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Stack>
+            {params.row.status === 'active' ? (
+              <UndoIcon fontSize="small" />
+            ) : (
+              <DoneIcon fontSize="small" />
+            )}
+          </IconButton>
+        </Tooltip>
 
-      ),
-    },
-  ];
+        <Tooltip title="Eliminar">
+          <IconButton
+            size="small"
+            color="error"
+            onClick={() => handleDelete(params.row.id)}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+    ),
+  },
+];
+
 
   return (
     <DataGrid
@@ -89,7 +124,6 @@ export const UserTabla = ({
       onSortModelChange={setSortModel}
       pageSizeOptions={[5, 10, 20]}
       disableColumnFilter
-      
     />
   );
 };
