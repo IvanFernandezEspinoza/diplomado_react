@@ -12,7 +12,10 @@ import { schemaUser, type UserFormValues } from '../../models';
 import { createInitialState, hanleZodError } from '../../helpers';
 import { useAlert, useAxios } from '../../hooks';
 import { Link, useNavigate } from 'react-router-dom';
-import { useActionState } from 'react';
+import { useActionState ,useState} from 'react';
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+
 
 type UserActionState = ActionState<UserFormValues>;
 const initialState = createInitialState<UserFormValues>();
@@ -50,6 +53,11 @@ export const UserPage = () => {
     initialState
   );
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword((prev) => !prev);
   return (
     <Container
       maxWidth={false}
@@ -100,11 +108,20 @@ export const UserPage = () => {
               required
               fullWidth
               label="Password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               disabled={isPending}
               defaultValue={state?.formData?.password}
               error={!!state?.errors?.password}
               helperText={state?.errors?.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={togglePasswordVisibility} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               name="confirmPassword"
@@ -112,11 +129,20 @@ export const UserPage = () => {
               required
               fullWidth
               label="Repetir password"
-              type="password"
+              type={showConfirmPassword ? 'text' : 'password'}
               disabled={isPending}
               defaultValue={state?.formData?.confirmPassword}
               error={!!state?.errors?.confirmPassword}
               helperText={state?.errors?.confirmPassword}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={toggleConfirmPasswordVisibility} edge="end">
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <Button
               type="submit"

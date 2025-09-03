@@ -31,7 +31,7 @@ export const UserFilter = ({ filterStatus, setFilterStatus, setSearch }: Props) 
   return (
     <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: 3 }}>
       <Toolbar sx={{ gap: 2, flexWrap: 'wrap' }}>
-        {/* Filtro de búsqueda */}
+
         <TextField
           placeholder="Buscar usuario..."
           value={searchFilter}
@@ -54,7 +54,6 @@ export const UserFilter = ({ filterStatus, setFilterStatus, setSearch }: Props) 
           }}
         />
 
-        {/* Filtro de estado */}
         <FormControl size="small" sx={{ minWidth: 150 }}>
           <InputLabel>Estado</InputLabel>
           <Select
