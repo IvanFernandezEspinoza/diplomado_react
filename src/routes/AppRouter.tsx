@@ -7,40 +7,24 @@ import { UsersPage } from '../pages/private/UsersPage';
 
 export const AppRouter = () => {
   return (
-    // <HashRouter>
-    // // <BrowserRouter>
-    //   <Routes>
-    //     <Route element={<PublicRoute />}>
-    //       <Route path="/" element={<Navigate to="./login" />}></Route>
-    //       <Route path="/login" element={<LoginPage />}></Route>
-    //       <Route path="/userRegister" element={<UserPage />}></Route>
-    //     </Route>
+      <HashRouter>
+        {/* <BrowserRouter> */}
+        <Routes>
+          <Route element={<PublicRoute />}>
+            <Route path="/" element={<Navigate to="./login" />}></Route>
+            <Route path="/login" element={<LoginPage />}></Route>
+            <Route path="/userRegister" element={<UserPage />}></Route>
+          </Route>
 
-    //     <Route element={<PrivateLayout />}>
-    //       <Route path="/perfil" element={<PerfilPage />}></Route>
-    //       <Route path="/tasks" element={<TasksPage />}></Route>
-    //       <Route path="/users" element={<UsersPage />}></Route>
-    //     </Route>
+          <Route element={<PrivateLayout />}>
+            <Route path="/perfil" element={<PerfilPage />}></Route>
+            <Route path="/tasks" element={<TasksPage />}></Route>
+            <Route path="/users" element={<UsersPage />}></Route>
+          </Route>
 
-    //     <Route path="*" element={<NotFoundPage />}></Route>
-    //   </Routes>
-    // // </BrowserRouter>
-    <HashRouter>
-      <Routes>
-        <Route element={<PublicRoute />}>
-          <Route path="/" element={<Navigate to="./login" />}></Route>
-          <Route path="/login" element={<LoginPage />}></Route>
-          <Route path="/userRegister" element={<UserPage />}></Route>
-        </Route>
-
-        <Route element={<PrivateLayout />}>
-          <Route path="/perfil" element={<PerfilPage />}></Route>
-          <Route path="/tasks" element={<TasksPage />}></Route>
-          <Route path="/users" element={<UsersPage />}></Route>
-        </Route>
-
-        <Route path="*" element={<NotFoundPage />}></Route>
-      </Routes>
-    </HashRouter>
+          <Route path="*" element={<NotFoundPage />}></Route>
+        </Routes>
+        {/* </BrowserRouter> */}
+      </HashRouter>
   );
 };

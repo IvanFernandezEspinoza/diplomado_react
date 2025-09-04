@@ -5,6 +5,7 @@ import App from './App.tsx';
 import { AppRouter } from './routes/AppRouter.tsx';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { AlertProvider, AuthProvider } from './contexts/index.ts';
+import { HashRouter } from 'react-router-dom';
 
 const theme = createTheme({
   palette: {
@@ -22,6 +23,8 @@ const theme = createTheme({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    {/* <HashRouter> */}
+
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <AlertProvider>
@@ -31,5 +34,6 @@ createRoot(document.getElementById('root')!).render(
         </AlertProvider>
       </AuthProvider>
     </ThemeProvider>
+    {/* </HashRouter> */}
   </StrictMode>
 );
