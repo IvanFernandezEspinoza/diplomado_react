@@ -5,7 +5,7 @@ import App from './App.tsx';
 import { AppRouter } from './routes/AppRouter.tsx';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { AlertProvider, AuthProvider } from './contexts/index.ts';
-import { HashRouter } from 'react-router-dom';
+
 
 const theme = createTheme({
   palette: {
